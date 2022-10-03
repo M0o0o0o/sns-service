@@ -2,7 +2,6 @@ package mooyeol.snsservice.repository.member;
 
 import lombok.extern.slf4j.Slf4j;
 import mooyeol.snsservice.domain.Member;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;

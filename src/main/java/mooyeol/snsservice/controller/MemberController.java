@@ -30,7 +30,7 @@ public class MemberController {
 
     @PostMapping("/member")
     @ResponseStatus(HttpStatus.CREATED)
-    public String join(@Validated @ModelAttribute MemberDto memberDto, BindingResult bindingResult) throws BindException {
+    public String join(@Validated @ModelAttribute  MemberDto memberDto, BindingResult bindingResult) throws BindException {
 
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
