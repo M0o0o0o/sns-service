@@ -8,6 +8,7 @@ import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -19,8 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class MemberController {
 
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -30,7 +30,7 @@ public class MemberController {
 
     @PostMapping("/member")
     @ResponseStatus(HttpStatus.CREATED)
-    public String join(@Validated @ModelAttribute  MemberDto memberDto, BindingResult bindingResult) throws BindException {
+    public ResponseEntity<Object> join(@Validated @ModelAttribute  MemberDto memberDto, BindingResult bindingResult) throws BindException {
 
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
@@ -41,9 +41,8 @@ public class MemberController {
         member.setPassword(memberDto.getPassword());
         memberService.join(member);
 
-        return "ok";
+        return new ResponseEntity<>("회원가입을 축하합니다.", HttpStatus.NO_CONTENT);
     }
-
 
     @Data
     @AllArgsConstructor
