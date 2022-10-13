@@ -1,24 +1,21 @@
 package mooyeol.snsservice.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.repository.member.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MemberService {
 
-    @Autowired
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public void join(Member member) {
-        /**
-         * memberDto로 넘어온 이메일이 중복되는 지 확인 후에 repository를 통해 멤버를 생성한다.
-         */
         checkDuplicatedEmail(member.getEmail());
         memberRepository.save(member);
     }
