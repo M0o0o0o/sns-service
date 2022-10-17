@@ -21,7 +21,13 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public Post findPost(Long id) {
-        return em.find(Post.class, id);
+        try {
+            String jpql = "SELECT p FROM Post p join fetch p.member where p.id = :id";
+            TypedQuery<Post> query = em.createQuery(jpql, Post.class);
+            return query.setParameter("id", id).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
