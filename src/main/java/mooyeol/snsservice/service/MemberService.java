@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.repository.member.MemberRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,10 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void join(Member member) {
         checkDuplicatedEmail(member.getEmail());
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
         memberRepository.save(member);
     }
 

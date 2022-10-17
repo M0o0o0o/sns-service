@@ -3,12 +3,15 @@ package mooyeol.snsservice.controller;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.domain.Post;
 import mooyeol.snsservice.exception.ErrorResponse;
 import mooyeol.snsservice.service.PostService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -25,20 +28,31 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostController {
 
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAccessDinied(AccessDeniedException exception) {
+        return new ErrorResponse(exception.getMessage());
+    }
 
     private final PostService postService;
 
     @GetMapping("/post/{id}")
-    public ResponseEntity<Object> findPost(@PathVariable Long id) {
-        Optional<Post> optionalPost = postService.findPost(id);
-        if(optionalPost.isEmpty())
+    public ResponseEntity<Object> findPost(@AuthenticationPrincipal Object principal, @PathVariable Long id) {
+        boolean isLoggedIn = false;
+        if (principal instanceof Member) {
+            isLoggedIn = true;
+        }
+
+        log.info("is Member ???? ={}", isLoggedIn);
+
+        Optional<Post> optionalPost = postService.findPost(id, isLoggedIn);
+        if (optionalPost.isEmpty())
             return new ResponseEntity<>(new ErrorResponse("존재하지 않는 게시글입니다."), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(new PostGetDto(optionalPost.get()), HttpStatus.OK);
     }
 
-
     @PostMapping("/post")
-    public ResponseEntity<Object> addPost(@ModelAttribute @Validated PostAddDto postDto, BindingResult bindingResult) throws BindException {
+    public ResponseEntity<Object> addPost(@AuthenticationPrincipal Object principal, @ModelAttribute @Validated PostAddDto postDto, BindingResult bindingResult) throws BindException {
 
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
@@ -53,6 +67,7 @@ public class PostController {
         Post post = new Post();
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
+        post.setMember((Member) principal);
 
         Optional<Post> createdPost = postService.addPost(post, hashTags);
 
@@ -61,17 +76,15 @@ public class PostController {
         return new ResponseEntity<>("게시글이 생성되었습니다.", headers, HttpStatus.CREATED);
     }
 
-
-
     @PatchMapping("/post/{id}")
-    public ResponseEntity<Object> updatePost(@PathVariable Long id, @ModelAttribute PostUpdateDto postDto, BindingResult bindingResult) throws BindException {
+    public ResponseEntity<Object> updatePost(@AuthenticationPrincipal Object principal, @PathVariable Long id, @ModelAttribute PostUpdateDto postDto, BindingResult bindingResult) throws BindException {
         List<String> hashTags = postDto.getHashTags() != null ? getHashTagsList(postDto.getHashTags(), bindingResult) : null;
 
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
 
-        Post post = postService.updatePost(id, postDto, hashTags);
+        Post post = postService.updatePost(id, postDto, hashTags, (Member) principal);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.LOCATION, "/post/" + post.getId());
@@ -82,9 +95,9 @@ public class PostController {
 
     // 우선 게시글이 존재하지 않는 경우도 확인을 해봐야 한다.
     @DeleteMapping("/post/{id}")
-    public ResponseEntity<Object> deletePost(@PathVariable Long id) {
+    public ResponseEntity<Object> deletePost(@AuthenticationPrincipal Object principal, @PathVariable Long id) {
         try {
-           postService.deletePost(id);
+            postService.deletePost(id, (Member) principal);
             return new ResponseEntity<>(new ErrorResponse("게시글이 삭제되었습니다."), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(new ErrorResponse("존재하지 않는 게시글입니다."), HttpStatus.NOT_FOUND);

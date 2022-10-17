@@ -2,16 +2,16 @@ package mooyeol.snsservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mooyeol.snsservice.controller.PostConditionDto;
 import mooyeol.snsservice.controller.PostUpdateDto;
+import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.domain.Post;
 import mooyeol.snsservice.domain.PostTag;
 import mooyeol.snsservice.domain.Tag;
 import mooyeol.snsservice.repository.post.PostRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.TransactionScoped;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +28,6 @@ public class PostService {
 
     @Transactional
     public Optional<Post> addPost(Post post, List<String> hashtags) {
-
         postRepository.savePost(post);
 
         setHashTags(post, hashtags);
@@ -37,10 +36,15 @@ public class PostService {
 
 
     @Transactional
-    public Post updatePost(Long id, PostUpdateDto postDto, List<String> hashTags) {
+    public Post updatePost(Long id, PostUpdateDto postDto, List<String> hashTags, Member member) {
         Post post = postRepository.findPost(id);
+
         if (post == null) {
             throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
+        }
+
+        if (member.getId() != post.getMember().getId()) {
+            throw new AccessDeniedException("글 작성자가 아닙니다.");
         }
 
         if(postDto.getTitle() != null) post.setTitle(postDto.getTitle());
@@ -52,18 +56,29 @@ public class PostService {
 
 
     @Transactional
-    public void deletePost(Long id) {
+    public void deletePost(Long id, Member member) {
         Post post = postRepository.findPost(id);
         if (post == null) {
             throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
+        }
+
+        if (member.getId() != post.getMember().getId()) {
+            throw new AccessDeniedException("글 작성자가 아닙니다.");
         }
         postRepository.deletePost(post);
     }
 
     @Transactional
-    public Optional<Post> findPost(Long id) {
-        Optional<Post> post = postRepository.findPostWithHashTags(id);
-        return post;
+    public Optional<Post> findPost(Long id, boolean isLoggedIn) {
+        Optional<Post> optionalPost = postRepository.findPostWithHashTags(id);
+
+
+        if (isLoggedIn && optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            post.setViews(post.getViews() + 1);
+        }
+
+        return optionalPost;
     }
 
     private void setHashTags(Post post, List<String> hashtags) {
@@ -87,7 +102,5 @@ public class PostService {
             }
         }
     }
-
-
 }
 
