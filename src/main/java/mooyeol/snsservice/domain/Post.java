@@ -28,6 +28,10 @@ public class Post extends TimeEntity {
     @Column(name = "post_views", columnDefinition = "integer default 0")
     private long views;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @OneToMany(mappedBy = "post")
     private List<Heart> heartList = new ArrayList<>();
 
