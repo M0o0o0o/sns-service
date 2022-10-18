@@ -1,6 +1,5 @@
 package mooyeol.snsservice.controller;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mooyeol.snsservice.domain.Member;
@@ -42,8 +41,6 @@ public class PostController {
         if (principal instanceof Member) {
             isLoggedIn = true;
         }
-
-        log.info("is Member ???? ={}", isLoggedIn);
 
         Optional<Post> optionalPost = postService.findPost(id, isLoggedIn);
         if (optionalPost.isEmpty())
@@ -121,5 +118,17 @@ public class PostController {
         }
 
         return result;
+    }
+
+
+    @PostMapping("/post/like/{id}")
+    public ResponseEntity<Object> likePost(@AuthenticationPrincipal Object principal, @PathVariable Long id) {
+        try {
+            Member member = (Member) principal;
+            postService.updateHeart(id, member);
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(new ErrorResponse("존재하지 않는 게시글입니다."), HttpStatus.NOT_FOUND);
+        }
     }
 }
