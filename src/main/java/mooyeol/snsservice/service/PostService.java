@@ -3,10 +3,8 @@ package mooyeol.snsservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mooyeol.snsservice.controller.PostUpdateDto;
-import mooyeol.snsservice.domain.Member;
-import mooyeol.snsservice.domain.Post;
-import mooyeol.snsservice.domain.PostTag;
-import mooyeol.snsservice.domain.Tag;
+import mooyeol.snsservice.domain.*;
+import mooyeol.snsservice.repository.heart.HeartRepository;
 import mooyeol.snsservice.repository.post.PostRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -20,11 +18,9 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PostService {
-    /**
-     * 1. hahsTags가 들어왔다면 Tag 테이블에서 존재하지 않는 tag들을 찾는다.
-     *  1.1 존재하지 않는 tag가 있다면 tag를 생성한다.
-     */
+
     private final PostRepository postRepository;
+    private final HeartRepository heartRepository;
 
     @Transactional
     public Optional<Post> addPost(Post post, List<String> hashtags) {
@@ -70,37 +66,65 @@ public class PostService {
 
     @Transactional
     public Optional<Post> findPost(Long id, boolean isLoggedIn) {
-        Optional<Post> optionalPost = postRepository.findPostWithHashTags(id);
+        Optional<Post> OptionalPost = postRepository.findPostWithHashTags(id);
 
-
-        if (isLoggedIn && optionalPost.isPresent()) {
-            Post post = optionalPost.get();
+        if (OptionalPost.isPresent() && isLoggedIn) {
+            Post post = OptionalPost.get();
             post.setViews(post.getViews() + 1);
         }
-
-        return optionalPost;
+        return OptionalPost;
     }
 
-    private void setHashTags(Post post, List<String> hashtags) {
-        if (hashtags != null) {
-            List<Tag> existTags = postRepository.findTags(hashtags);
-            // 이미 존재하는 TAG를 제외하고 새로 생성해야 하는데 지금은 중복으로 들어간다.
-            for (String hashtag : hashtags) {
-                if (!existTags.contains(hashtag)) {
-                    Tag tag = new Tag();
-                    tag.setName(hashtag);
-                    postRepository.saveTag(tag);
-                    existTags.add(tag);
+    private void setHashTags(Post post, List<String> hashTags) {
+        if(hashTags == null) return;
+
+        List<Tag> existTags = postRepository.findTags(hashTags);
+
+        for (String hashTag : hashTags) {
+            boolean isExist = false;
+            for (Tag existTag : existTags) {
+                if (existTag.getName().equals(hashTag)) {
+                    isExist = true;
+                    break;
                 }
             }
 
-            for (Tag tag : existTags) {
-                PostTag postTag = new PostTag();
-                postTag.setPost(post);
-                postTag.setTag(tag);
-                postRepository.savePostTag(postTag);
-            }
+            if(isExist) continue;
+
+            Tag tag = new Tag();
+            tag.setName(hashTag);
+            postRepository.saveTag(tag);
+            existTags.add(tag);
         }
+
+        for (Tag tag : existTags) {
+            PostTag postTag = new PostTag();
+            postTag.setPost(post);
+            postTag.setTag(tag);
+            postTag.setPostTagName(tag.getName());
+            postRepository.savePostTag(postTag);
+        }
+
+    }
+
+    @Transactional
+    public void updateHeart(Long id, Member member) {
+        Post post = postRepository.findPost(id);
+        if (post == null) {
+            throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
+        }
+
+        Optional<Heart> heart = heartRepository.findHeart(member, post);
+
+        if(heart.isPresent()){
+            heartRepository.deleteHeart(heart.get());
+            return;
+        }
+
+        Heart newHeart = new Heart();
+        newHeart.setPost(post);
+        newHeart.setMember(member);
+        heartRepository.saveHeart(newHeart);
     }
 }
 

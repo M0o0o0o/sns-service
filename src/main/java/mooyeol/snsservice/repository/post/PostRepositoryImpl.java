@@ -33,13 +33,14 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public Optional<Post> findPostWithHashTags(Long id) {
         try {
-            String queryStr = "SELECT p FROM Post p join fetch p.postTags where p.id = :id";
+            String queryStr = "SELECT distinct p FROM Post p join fetch p.postTags where p.id = :id";
             TypedQuery<Post> query = em.createQuery(queryStr, Post.class);
             query.setParameter("id", id);
             return Optional.of(query.getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
         }
+
     }
 
     @Override
@@ -59,7 +60,6 @@ public class PostRepositoryImpl implements PostRepository {
         TypedQuery<Tag>  query = em.createQuery(queryStr, Tag.class);
         query.setParameter("hashTags", hashTags);
         return query.getResultList();
-
     }
 
     @Override
@@ -70,7 +70,7 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public void savePostTag(PostTag postTag) {
         em.persist(postTag);
-        postTag.getPost().getPostTags().add(postTag);
+         postTag.getPost().getPostTags().add(postTag);
     }
 
 }
