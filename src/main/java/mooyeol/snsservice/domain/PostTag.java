@@ -15,6 +15,9 @@ public class PostTag {
     @Column(name = "post_tag_id")
     private long id;
 
+    @Column(name = "post_tag_name")
+    private String postTagName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
@@ -22,4 +25,5 @@ public class PostTag {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id")
     private Tag tag;
+
 }

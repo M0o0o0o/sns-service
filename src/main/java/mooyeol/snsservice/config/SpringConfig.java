@@ -1,5 +1,7 @@
 package mooyeol.snsservice.config;
 
+import mooyeol.snsservice.repository.heart.HeartRepository;
+import mooyeol.snsservice.repository.heart.HeartRepositoryImpl;
 import mooyeol.snsservice.repository.member.H2MemberRepository;
 import mooyeol.snsservice.repository.member.MemberRepository;
 import mooyeol.snsservice.repository.post.PostRepository;
@@ -18,5 +20,10 @@ public class SpringConfig {
     @Bean
     public PostRepository postRepository() {
         return new PostRepositoryImpl();
+    }
+
+    @Bean
+    public HeartRepository heartRepository() {
+        return new HeartRepositoryImpl();
     }
 }

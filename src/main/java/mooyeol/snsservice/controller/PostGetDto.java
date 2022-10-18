@@ -25,7 +25,7 @@ public class PostGetDto {
 
         StringBuilder sb = new StringBuilder();
         for (PostTag postTag : post.getPostTags()) {
-            sb.append(postTag.getTag().getName() + ",");
+            sb.append(postTag.getPostTagName() + ",");
         }
         this.hashTags = sb.toString();
     }
