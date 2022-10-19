@@ -8,15 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 게시글 domain에 생성일 추가해야 한다.
- * 좋아요, 조회수에 따른 검색도 추후에 구현해야 한다.
+ * order regex 적용
  */
 @Data
 public class PostConditionDto {
-    private String order = "createdDate";
+    @Pattern(regexp = "^(date|heart|view)$", message = "date, heart, view 중 하나를 입력해주세요.")
+    private String order;
 
-    @AssertFalse(message = "{AssertFalse.PostCondition.reverse}")
-    public boolean reverse = false;
+    @Pattern(regexp = "^(true|false)$", message = "true 또는 false만 입력해주세요.")
+    public String desc;
 
     private String search;
 
@@ -24,7 +24,7 @@ public class PostConditionDto {
 
     @NotNull(message = "{NotEmpty.PostCondition.page}")
     @Positive(message = "{Positive.PostCondition.page}")
-    private int page;
+    private int page = 0;
 
     @Positive
     @Min(value = 15, message = "{Min.PostCondition.page}")
@@ -32,14 +32,4 @@ public class PostConditionDto {
     private int cnt = 15;
 
     private List<String> listHashTags = null;
-
-    public void setListHashTags() {
-        if(this.hashTags == null) return;
-        String[] split = hashTags.split(",");
-
-        listHashTags = new ArrayList<>();
-        for (String s : split) {
-            listHashTags.add("#" + s);
-        }
-    }
 }
