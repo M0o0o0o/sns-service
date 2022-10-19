@@ -48,6 +48,24 @@ public class PostController {
         return new ResponseEntity<>(new PostGetDto(optionalPost.get()), HttpStatus.OK);
     }
 
+    @GetMapping("/post")
+    public ResponseEntity<Object> findPosts(@ModelAttribute @Validated PostConditionDto condition, BindingResult bindingResult) throws BindException {
+
+        if (condition.getHashTags() != null) {
+            condition.setListHashTags(getHashTagsList(condition.getHashTags(), bindingResult));
+        }
+
+        if (bindingResult.hasErrors()) {
+            throw new BindException(bindingResult);
+        }
+
+        List<PostListDto> posts = postService.findPosts(condition);
+
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+
+
     @PostMapping("/post")
     public ResponseEntity<Object> addPost(@AuthenticationPrincipal Object principal, @ModelAttribute @Validated PostAddDto postDto, BindingResult bindingResult) throws BindException {
 
@@ -101,25 +119,6 @@ public class PostController {
         }
     }
 
-    private List<String> getHashTagsList(String hashTags, BindingResult bindingResult) {
-
-        List<String> result = Arrays.stream(hashTags.split(",")).collect(Collectors.toList());
-
-        if (result.size() > 20 || result.size() < 1) {
-            bindingResult.rejectValue("hashTags", "range", new Object[]{"1", "20"}, "해시태그는 1~20개 까지만 입력 가능합니다.");
-        }
-
-        String pattern = "#([0-9a-zA-Z가-힣]*)";
-        for (String hashTag : result) {
-            if (!Pattern.matches(pattern, hashTag)) {
-                bindingResult.rejectValue("hashTags", "pattern", "해시태그는 #으로 시작해야 합니다.");
-                break;
-            }
-        }
-
-        return result;
-    }
-
 
     @PostMapping("/post/like/{id}")
     public ResponseEntity<Object> likePost(@AuthenticationPrincipal Object principal, @PathVariable Long id) {
@@ -130,5 +129,23 @@ public class PostController {
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(new ErrorResponse("존재하지 않는 게시글입니다."), HttpStatus.NOT_FOUND);
         }
+    }
+
+    private List<String> getHashTagsList(String hashTags, BindingResult bindingResult) {
+
+        List<String> result = Arrays.stream(hashTags.split(",")).collect(Collectors.toList());
+
+        if (result.size() > 20) {
+            bindingResult.rejectValue("hashTags", "range", new Object[]{"1", "20"}, "해시태그는 1~20개 까지만 입력 가능합니다.");
+        }
+
+        String pattern = "#([0-9a-zA-Z가-힣]*)";
+        for (String hashTag : result) {
+            if (!Pattern.matches(pattern, hashTag)) {
+                bindingResult.rejectValue("hashTags", "pattern", "해시태그는 #으로 시작해야 합니다.");
+                break;
+            }
+        }
+        return result;
     }
 }

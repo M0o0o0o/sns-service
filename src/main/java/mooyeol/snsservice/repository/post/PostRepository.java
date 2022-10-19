@@ -1,6 +1,7 @@
 package mooyeol.snsservice.repository.post;
 
 import mooyeol.snsservice.controller.PostConditionDto;
+import mooyeol.snsservice.controller.PostListDto;
 import mooyeol.snsservice.domain.Post;
 import mooyeol.snsservice.domain.PostTag;
 import mooyeol.snsservice.domain.Tag;
@@ -29,4 +30,6 @@ public interface PostRepository {
     Post findPost(Long id);
 
     Optional<Post> findPostWithHashTags(Long id);
+
+    List<PostListDto> findPosts(String order, String desc, String search, List<String> listHashTags, int page, int cnt);
 }

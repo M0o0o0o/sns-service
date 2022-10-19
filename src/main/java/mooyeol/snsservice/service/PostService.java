@@ -2,6 +2,8 @@ package mooyeol.snsservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mooyeol.snsservice.controller.PostConditionDto;
+import mooyeol.snsservice.controller.PostListDto;
 import mooyeol.snsservice.controller.PostUpdateDto;
 import mooyeol.snsservice.domain.*;
 import mooyeol.snsservice.repository.heart.HeartRepository;
@@ -75,6 +77,12 @@ public class PostService {
         return OptionalPost;
     }
 
+    @Transactional
+    public List<PostListDto> findPosts(PostConditionDto c) {
+        List<PostListDto> posts = postRepository.findPosts(c.getOrder(), c.getDesc(), c.getSearch(), c.getListHashTags(), c.getPage(), c.getCnt());
+        return posts;
+    }
+
     private void setHashTags(Post post, List<String> hashTags) {
         if(hashTags == null) return;
 
@@ -118,12 +126,14 @@ public class PostService {
 
         if(heart.isPresent()){
             heartRepository.deleteHeart(heart.get());
+            post.setHearts(post.getHearts() - 1);
             return;
         }
 
         Heart newHeart = new Heart();
         newHeart.setPost(post);
         newHeart.setMember(member);
+        post.setHearts(post.getHearts() + 1);
         heartRepository.saveHeart(newHeart);
     }
 }
