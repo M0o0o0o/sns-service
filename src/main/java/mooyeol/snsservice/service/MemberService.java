@@ -17,10 +17,12 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public void join(Member member) {
+    public Member join(Member member) {
         checkDuplicatedEmail(member.getEmail());
         member.setPassword(passwordEncoder.encode(member.getPassword()));
         memberRepository.save(member);
+
+        return member;
     }
 
     public void checkDuplicatedEmail(String email) {

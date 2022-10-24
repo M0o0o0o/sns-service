@@ -35,16 +35,13 @@ public class MemberController {
     }
 
     @PostMapping("/member")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> join(@Validated @ModelAttribute  MemberDto memberDto, BindingResult bindingResult) throws BindException {
+    public ResponseEntity<Object> join(@Validated @RequestBody  MemberDto memberDto, BindingResult bindingResult) throws BindException {
 
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
 
-        Member member = new Member();
-        member.setEmail(memberDto.getEmail());
-        member.setPassword(memberDto.getPassword());
+        Member member = memberDto.toEntity();
         memberService.join(member);
 
         return new ResponseEntity<>("회원가입을 축하합니다.", HttpStatus.NO_CONTENT);

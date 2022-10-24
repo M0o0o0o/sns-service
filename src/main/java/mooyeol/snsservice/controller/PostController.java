@@ -43,8 +43,10 @@ public class PostController {
         }
 
         Optional<Post> optionalPost = postService.findPost(id, isLoggedIn);
+
         if (optionalPost.isEmpty())
             return new ResponseEntity<>(new ErrorResponse("존재하지 않는 게시글입니다."), HttpStatus.NOT_FOUND);
+
         return new ResponseEntity<>(new PostGetDto(optionalPost.get()), HttpStatus.OK);
     }
 
@@ -67,7 +69,7 @@ public class PostController {
 
 
     @PostMapping("/post")
-    public ResponseEntity<Object> addPost(@AuthenticationPrincipal Object principal, @ModelAttribute @Validated PostAddDto postDto, BindingResult bindingResult) throws BindException {
+    public ResponseEntity<Object> addPost(@AuthenticationPrincipal Object principal, @RequestBody @Validated PostAddDto postDto, BindingResult bindingResult) throws BindException {
 
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
@@ -79,12 +81,9 @@ public class PostController {
             throw new BindException(bindingResult);
         }
 
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setContent(postDto.getContent());
-        post.setMember((Member) principal);
+        Post post = postDto.toEntity();
 
-        Optional<Post> createdPost = postService.addPost(post, hashTags);
+        Optional<Post> createdPost = postService.addPost(post, hashTags, principal);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.LOCATION, "/post/" + createdPost.get().getId());

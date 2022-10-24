@@ -25,7 +25,9 @@ public class PostService {
     private final HeartRepository heartRepository;
 
     @Transactional
-    public Optional<Post> addPost(Post post, List<String> hashtags) {
+    public Optional<Post> addPost(Post post, List<String> hashtags, Object principal) {
+        post.setMember((Member) principal);
+
         postRepository.savePost(post);
 
         setHashTags(post, hashtags);
@@ -83,6 +85,29 @@ public class PostService {
         return posts;
     }
 
+
+    @Transactional
+    public void updateHeart(Long id, Member member) {
+        Post post = postRepository.findPost(id);
+        if (post == null) {
+            throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
+        }
+
+        Optional<Heart> heart = heartRepository.findHeart(member, post);
+
+        if(heart.isPresent()){
+            heartRepository.deleteHeart(heart.get());
+            post.setHearts(post.getHearts() - 1);
+            return;
+        }
+
+        Heart newHeart = new Heart();
+        newHeart.setPost(post);
+        newHeart.setMember(member);
+        post.setHearts(post.getHearts() + 1);
+        heartRepository.saveHeart(newHeart);
+    }
+
     private void setHashTags(Post post, List<String> hashTags) {
         if(hashTags == null) return;
 
@@ -112,29 +137,6 @@ public class PostService {
             postTag.setPostTagName(tag.getName());
             postRepository.savePostTag(postTag);
         }
-
-    }
-
-    @Transactional
-    public void updateHeart(Long id, Member member) {
-        Post post = postRepository.findPost(id);
-        if (post == null) {
-            throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
-        }
-
-        Optional<Heart> heart = heartRepository.findHeart(member, post);
-
-        if(heart.isPresent()){
-            heartRepository.deleteHeart(heart.get());
-            post.setHearts(post.getHearts() - 1);
-            return;
-        }
-
-        Heart newHeart = new Heart();
-        newHeart.setPost(post);
-        newHeart.setMember(member);
-        post.setHearts(post.getHearts() + 1);
-        heartRepository.saveHeart(newHeart);
     }
 }
 
