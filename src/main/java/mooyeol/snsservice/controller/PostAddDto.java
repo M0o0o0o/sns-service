@@ -2,11 +2,14 @@ package mooyeol.snsservice.controller;
 
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import mooyeol.snsservice.domain.Post;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Data
+@NoArgsConstructor
 public class PostAddDto {
 
     @NotBlank(message = "{NotBlank.postAddDto.title}")
@@ -18,4 +21,11 @@ public class PostAddDto {
     private String content;
 
     private String hashTags;
+
+    public Post toEntity() {
+        Post post = new Post();
+        post.setTitle(this.title);
+        post.setContent(this.content);
+        return post;
+    }
 }
