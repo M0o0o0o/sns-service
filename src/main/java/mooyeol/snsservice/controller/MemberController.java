@@ -42,7 +42,7 @@ public class MemberController {
         }
 
         Member member = memberDto.toEntity();
-        memberService.join(member);
+        Member savedMember = memberService.join(member);
 
         return new ResponseEntity<>("회원가입을 축하합니다.", HttpStatus.NO_CONTENT);
     }
