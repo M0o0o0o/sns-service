@@ -3,7 +3,8 @@ package mooyeol.snsservice.repository.heart;
 import mooyeol.snsservice.domain.Heart;
 import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.domain.Post;
-import mooyeol.snsservice.repository.member.MemberRepository;
+import mooyeol.snsservice.repository.HeartRepository;
+import mooyeol.snsservice.repository.MemberRepository;
 import mooyeol.snsservice.repository.post.PostRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ class HeartRepositoryImplTest {
         Heart heart = new Heart();
         heart.setPost(post);
         heart.setMember(member);
-        heartRepository.saveHeart(heart);
+        heartRepository.save(heart);
 
         // then
         assertEquals(heart, em.find(Heart.class, heart.getId()));
@@ -72,10 +73,10 @@ class HeartRepositoryImplTest {
         heart.setPost(post);
 
         em.persist(heart);
-        heartRepository.deleteHeart(heart);
+        heartRepository.delete(heart);
 
         //when
-        Optional<Heart> OptionalHeart = heartRepository.findHeart(member, post);
+        Optional<Heart> OptionalHeart = heartRepository.findHeartByMemberAndPost(member, post);
 
         //then
         assertTrue(OptionalHeart.isEmpty());
@@ -100,7 +101,7 @@ class HeartRepositoryImplTest {
         em.persist(heart);
 
         //when
-        Optional<Heart> optionalHeart = heartRepository.findHeart(member, post);
+        Optional<Heart> optionalHeart = heartRepository.findHeartByMemberAndPost(member, post);
 
         //then
         assertTrue(optionalHeart.isPresent());
@@ -120,7 +121,7 @@ class HeartRepositoryImplTest {
         em.persist(post);
 
         //when
-        Optional<Heart> heart = heartRepository.findHeart(member, post);
+        Optional<Heart> heart = heartRepository.findHeartByMemberAndPost(member, post);
 
         //then
         assertTrue(heart.isEmpty());
