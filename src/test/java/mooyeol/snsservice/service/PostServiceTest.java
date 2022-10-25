@@ -3,7 +3,7 @@ package mooyeol.snsservice.service;
 import mooyeol.snsservice.controller.PostUpdateDto;
 import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.domain.Post;
-import mooyeol.snsservice.repository.heart.HeartRepository;
+import mooyeol.snsservice.repository.HeartRepository;
 import mooyeol.snsservice.repository.post.PostRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

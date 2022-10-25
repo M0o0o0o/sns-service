@@ -6,7 +6,7 @@ import mooyeol.snsservice.controller.PostConditionDto;
 import mooyeol.snsservice.controller.PostListDto;
 import mooyeol.snsservice.controller.PostUpdateDto;
 import mooyeol.snsservice.domain.*;
-import mooyeol.snsservice.repository.heart.HeartRepository;
+import mooyeol.snsservice.repository.HeartRepository;
 import mooyeol.snsservice.repository.post.PostRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -93,10 +93,10 @@ public class PostService {
             throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
         }
 
-        Optional<Heart> heart = heartRepository.findHeart(member, post);
+        Optional<Heart> heart = heartRepository.findHeartByMemberAndPost(member, post);
 
         if(heart.isPresent()){
-            heartRepository.deleteHeart(heart.get());
+            heartRepository.delete(heart.get());
             post.setHearts(post.getHearts() - 1);
             return;
         }
@@ -105,7 +105,7 @@ public class PostService {
         newHeart.setPost(post);
         newHeart.setMember(member);
         post.setHearts(post.getHearts() + 1);
-        heartRepository.saveHeart(newHeart);
+        heartRepository.save(newHeart);
     }
 
     private void setHashTags(Post post, List<String> hashTags) {
