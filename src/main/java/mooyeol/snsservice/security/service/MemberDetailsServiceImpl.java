@@ -2,7 +2,7 @@ package mooyeol.snsservice.security.service;
 
 import lombok.RequiredArgsConstructor;
 import mooyeol.snsservice.domain.Member;
-import mooyeol.snsservice.repository.member.MemberRepository;
+import mooyeol.snsservice.repository.MemberRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
