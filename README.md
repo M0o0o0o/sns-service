@@ -10,6 +10,7 @@
 # issue 해결 과정
 
 # ERD
+<img width="1329" alt="스크린샷 2022-10-26 오후 1 49 01" src="https://user-images.githubusercontent.com/68809337/197937287-5a02e936-7047-4d54-9a1f-ef36d418cbde.png">
 
 # 컨벤션
  컨벤션은 [여기](https://shade-jackrabbit-4bd.notion.site/cfa0b6f205314c00935de3f93cdfaf90) 서 확인하실 수 있습니다.
