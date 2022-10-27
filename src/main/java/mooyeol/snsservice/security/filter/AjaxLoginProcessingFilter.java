@@ -2,7 +2,7 @@ package mooyeol.snsservice.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import mooyeol.snsservice.controller.MemberDto;
+import mooyeol.snsservice.dto.MemberDto;
 import mooyeol.snsservice.security.token.AjaxAuthenticationToken;
 import mooyeol.snsservice.security.util.WebUtil;
 import org.springframework.http.HttpMethod;
