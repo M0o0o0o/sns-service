@@ -1,4 +1,4 @@
-package mooyeol.snsservice.controller;
+package mooyeol.snsservice.dto;
 
 import lombok.*;
 import mooyeol.snsservice.domain.Member;
