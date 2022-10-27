@@ -1,10 +1,10 @@
 package mooyeol.snsservice.service;
 
-import mooyeol.snsservice.controller.PostUpdateDto;
+import mooyeol.snsservice.dto.PostUpdateDto;
 import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.domain.Post;
 import mooyeol.snsservice.repository.HeartRepository;
-import mooyeol.snsservice.repository.post.PostRepository;
+import mooyeol.snsservice.repository.PostRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +44,7 @@ class PostServiceTest {
     public void update_post_throw_IllegalArgumentException() {
         //given
         PostUpdateDto dto = new PostUpdateDto("Test Title", "Test Content", null);
-        when(postRepository.findPost(any())).thenReturn(null);
+        when(postRepository.findById(any())).thenReturn(Optional.empty());
 
         // when, then
         assertThrows(IllegalArgumentException.class, () -> {
@@ -65,7 +65,7 @@ class PostServiceTest {
         Post findPost = new Post();
         findPost.setMember(ownerOfPost);
 
-        when(postRepository.findPost(any())).thenReturn(findPost);
+        when(postRepository.findById(any())).thenReturn(Optional.of(findPost));
 
         //when, then
         assertThrows(AccessDeniedException.class, () -> postService.updatePost(1L, new PostUpdateDto(), null, requestMember));
@@ -89,7 +89,7 @@ class PostServiceTest {
         requestMember.setId(1L);
         findPost.setMember(requestMember);
 
-        when(postRepository.findPost(any())).thenReturn(findPost);
+        when(postRepository.findById(any())).thenReturn(Optional.of(findPost));
 
         //when
         Post post = postService.updatePost(1L, dto, null, requestMember);
@@ -107,7 +107,7 @@ class PostServiceTest {
     @DisplayName("게시글 삭제 중 IllegalArgumentException 발생 테스트")
     public void delete_post_throw_IllegalArgumentException() {
         //given
-        when(postRepository.findPost(any())).thenReturn(null);
+        when(postRepository.findById(any())).thenReturn(Optional.empty());
 
         //when, then
         assertThrows(IllegalArgumentException.class, () -> postService.deletePost(1L, null));
@@ -126,7 +126,7 @@ class PostServiceTest {
         Post findPost = new Post();
         findPost.setMember(ownerOfPost);
 
-        when(postRepository.findPost(any())).thenReturn(findPost);
+        when(postRepository.findById(any())).thenReturn(Optional.of(findPost));
 
         //when, then
         assertThrows(AccessDeniedException.class, () -> postService.deletePost(1L, requestMember));

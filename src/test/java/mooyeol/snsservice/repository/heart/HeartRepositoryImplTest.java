@@ -5,7 +5,7 @@ import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.domain.Post;
 import mooyeol.snsservice.repository.HeartRepository;
 import mooyeol.snsservice.repository.MemberRepository;
-import mooyeol.snsservice.repository.post.PostRepository;
+import mooyeol.snsservice.repository.PostRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,7 +134,7 @@ class HeartRepositoryImplTest {
         Post post = makePost();
 
         //when
-        postRepository.savePost(post);
+        postRepository.save(post);
 
         //then
         assertEquals(post, em.find(Post.class, post.getId()));
@@ -148,7 +148,7 @@ class HeartRepositoryImplTest {
         em.persist(post);
 
         //when
-        postRepository.deletePost(post);
+        postRepository.delete(post);
 
         //then
         assertNull(em.find(Post.class, post.getId()));

@@ -2,6 +2,7 @@ package mooyeol.snsservice.repository.post;
 
 import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.domain.Post;
+import mooyeol.snsservice.repository.PostRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,11 +37,15 @@ class PostRepositoryImplTest {
         post.setMember(member);
         em.persist(post);
 
+        em.flush();
+        em.clear();
+
         //when
-        postRepository.findPost(post.getId());
+        Optional<Post> optionalPost = postRepository.findById(post.getId());
 
         //then
-        assertEquals(post, em.find(Post.class, post.getId()));
+        assertTrue(optionalPost.isPresent());
+        assertEquals(post.getId(), optionalPost.get().getId());
 
     }
 
@@ -51,10 +58,10 @@ class PostRepositoryImplTest {
         em.remove(post);
 
         //when
-        Post findPost = postRepository.findPost(post.getId());
+        Optional<Post> optionalPost = postRepository.findById(post.getId());
 
         //then
-        assertNull(findPost);
+        assertTrue(optionalPost.isEmpty());
     }
 
 
