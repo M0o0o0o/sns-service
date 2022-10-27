@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.domain.Post;
+import mooyeol.snsservice.dto.*;
 import mooyeol.snsservice.exception.ErrorResponse;
 import mooyeol.snsservice.service.PostService;
 import org.springframework.http.HttpHeaders;
@@ -61,9 +62,7 @@ public class PostController {
             throw new BindException(bindingResult);
         }
 
-        List<PostListDto> posts = postService.findPosts(condition);
-
-        return new ResponseEntity<>(posts, HttpStatus.OK);
+        return new ResponseEntity<>(postService.findPosts(condition), HttpStatus.OK);
     }
 
 
