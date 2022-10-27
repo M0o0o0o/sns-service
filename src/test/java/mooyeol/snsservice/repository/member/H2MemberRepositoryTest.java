@@ -1,6 +1,7 @@
 package mooyeol.snsservice.repository.member;
 
 import mooyeol.snsservice.domain.Member;
+import mooyeol.snsservice.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

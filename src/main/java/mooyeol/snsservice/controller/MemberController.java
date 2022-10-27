@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mooyeol.snsservice.domain.Member;
+import mooyeol.snsservice.dto.MemberDto;
 import mooyeol.snsservice.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -42,7 +42,7 @@ public class MemberController {
         }
 
         Member member = memberDto.toEntity();
-        memberService.join(member);
+        Member savedMember = memberService.join(member);
 
         return new ResponseEntity<>("회원가입을 축하합니다.", HttpStatus.NO_CONTENT);
     }

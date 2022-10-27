@@ -1,29 +1,16 @@
 package mooyeol.snsservice.config;
 
-import mooyeol.snsservice.repository.heart.HeartRepository;
-import mooyeol.snsservice.repository.heart.HeartRepositoryImpl;
-import mooyeol.snsservice.repository.member.H2MemberRepository;
-import mooyeol.snsservice.repository.member.MemberRepository;
-import mooyeol.snsservice.repository.post.PostRepository;
-import mooyeol.snsservice.repository.post.PostRepositoryImpl;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.persistence.EntityManager;
 
 @Configuration
 public class SpringConfig {
 
     @Bean
-    public MemberRepository memberRepository() {
-        return new H2MemberRepository();
-    }
-
-    @Bean
-    public PostRepository postRepository() {
-        return new PostRepositoryImpl();
-    }
-
-    @Bean
-    public HeartRepository heartRepository() {
-        return new HeartRepositoryImpl();
+    public JPAQueryFactory queryFactory(EntityManager em) {
+        return new JPAQueryFactory(em);
     }
 }

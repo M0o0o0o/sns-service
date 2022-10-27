@@ -1,4 +1,4 @@
-package mooyeol.snsservice.controller;
+package mooyeol.snsservice.dto;
 
 
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Data
 public class PostConditionDto {
-    @Pattern(regexp = "^(date|heart|view)$", message = "date, heart, view 중 하나를 입력해주세요.")
+    @Pattern(regexp = "^(createdDate|hearts|views)$", message = "date, heart, view 중 하나를 입력해주세요.")
     private String order;
 
     @Pattern(regexp = "^(true|false)$", message = "true 또는 false만 입력해주세요.")
