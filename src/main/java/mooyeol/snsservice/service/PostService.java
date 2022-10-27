@@ -2,16 +2,22 @@ package mooyeol.snsservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mooyeol.snsservice.controller.PostConditionDto;
-import mooyeol.snsservice.controller.PostListDto;
-import mooyeol.snsservice.controller.PostUpdateDto;
+import mooyeol.snsservice.dto.PostConditionDto;
+import mooyeol.snsservice.dto.PostListDto;
+import mooyeol.snsservice.dto.PostUpdateDto;
 import mooyeol.snsservice.domain.*;
 import mooyeol.snsservice.repository.HeartRepository;
-import mooyeol.snsservice.repository.post.PostRepository;
+import mooyeol.snsservice.repository.PostRepository;
+import mooyeol.snsservice.repository.PostTagRepository;
+import mooyeol.snsservice.repository.TagRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,12 +29,14 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final HeartRepository heartRepository;
+    private final TagRepository tagRepository;
+    private final PostTagRepository postTagRepository;
 
     @Transactional
     public Optional<Post> addPost(Post post, List<String> hashtags, Object principal) {
         post.setMember((Member) principal);
 
-        postRepository.savePost(post);
+        postRepository.save(post);
 
         setHashTags(post, hashtags);
         return Optional.of(post);
@@ -37,11 +45,13 @@ public class PostService {
 
     @Transactional
     public Post updatePost(Long id, PostUpdateDto postDto, List<String> hashTags, Member member) {
-        Post post = postRepository.findPost(id);
+        Optional<Post> optionalPost = postRepository.findById(id);
 
-        if (post == null) {
+        if (optionalPost.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
         }
+
+        Post post = optionalPost.get();
 
         if (member.getId() != post.getMember().getId()) {
             throw new AccessDeniedException("글 작성자가 아닙니다.");
@@ -57,15 +67,17 @@ public class PostService {
 
     @Transactional
     public void deletePost(Long id, Member member) {
-        Post post = postRepository.findPost(id);
-        if (post == null) {
+        Optional<Post> optionalPost = postRepository.findById(id);
+        if (optionalPost.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
         }
+
+        Post post = optionalPost.get();
 
         if (member.getId() != post.getMember().getId()) {
             throw new AccessDeniedException("글 작성자가 아닙니다.");
         }
-        postRepository.deletePost(post);
+        postRepository.delete(post);
     }
 
     @Transactional
@@ -80,18 +92,26 @@ public class PostService {
     }
 
     @Transactional
-    public List<PostListDto> findPosts(PostConditionDto c) {
-        List<PostListDto> posts = postRepository.findPosts(c.getOrder(), c.getDesc(), c.getSearch(), c.getListHashTags(), c.getPage(), c.getCnt());
+    public Page<PostListDto> findPosts(PostConditionDto c) {
+        PageRequest pageRequest = PageRequest.of(c.getPage(), c.getCnt(), getSort(c));
+        Page<PostListDto> posts = postRepository.findPosts(pageRequest, c);
         return posts;
+    }
+
+    private Sort getSort(PostConditionDto condition) {
+        return Sort.by(condition.getDesc().equals("true") ? Sort.Direction.DESC : Sort.Direction.ASC, condition.getOrder());
     }
 
 
     @Transactional
     public void updateHeart(Long id, Member member) {
-        Post post = postRepository.findPost(id);
-        if (post == null) {
+        Optional<Post> optionalPost = postRepository.findById(id);
+
+        if (optionalPost.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 게시글입니다.");
         }
+
+        Post post = optionalPost.get();
 
         Optional<Heart> heart = heartRepository.findHeartByMemberAndPost(member, post);
 
@@ -111,7 +131,7 @@ public class PostService {
     private void setHashTags(Post post, List<String> hashTags) {
         if(hashTags == null) return;
 
-        List<Tag> existTags = postRepository.findTags(hashTags);
+        List<Tag> existTags = tagRepository.findTags(hashTags);
 
         for (String hashTag : hashTags) {
             boolean isExist = false;
@@ -126,7 +146,7 @@ public class PostService {
 
             Tag tag = new Tag();
             tag.setName(hashTag);
-            postRepository.saveTag(tag);
+            tagRepository.save(tag);
             existTags.add(tag);
         }
 
@@ -135,7 +155,7 @@ public class PostService {
             postTag.setPost(post);
             postTag.setTag(tag);
             postTag.setPostTagName(tag.getName());
-            postRepository.savePostTag(postTag);
+            postTagRepository.save(postTag);
         }
     }
 }
