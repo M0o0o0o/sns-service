@@ -1,15 +1,16 @@
 package mooyeol.snsservice.config;
 
-import mooyeol.snsservice.repository.post.PostRepository;
-import mooyeol.snsservice.repository.post.PostRepositoryImpl;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.persistence.EntityManager;
 
 @Configuration
 public class SpringConfig {
 
     @Bean
-    public PostRepository postRepository() {
-        return new PostRepositoryImpl();
+    public JPAQueryFactory queryFactory(EntityManager em) {
+        return new JPAQueryFactory(em);
     }
 }
