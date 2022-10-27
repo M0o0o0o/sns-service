@@ -1,7 +1,7 @@
 package mooyeol.snsservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import mooyeol.snsservice.domain.Member;
+import mooyeol.snsservice.dto.MemberDto;
 import mooyeol.snsservice.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

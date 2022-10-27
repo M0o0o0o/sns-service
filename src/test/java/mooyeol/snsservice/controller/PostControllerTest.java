@@ -2,6 +2,7 @@ package mooyeol.snsservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mooyeol.snsservice.domain.Post;
+import mooyeol.snsservice.dto.PostAddDto;
 import mooyeol.snsservice.service.PostService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
