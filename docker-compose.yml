@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  database:
+    image: mysql
+    container_name: db
+    environment:
+      - MYSQL_DATABASE=sns
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_ROOT_HOST='%'
+    ports:
+      - 13306:3306
+    networks:
+      - sns_network
+
+  application:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - '18080:8080'
+    depends_on:
+      - database
+    container_name: sns_service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/sns?useSSL=false&allowPublicKeyRetrieval=true&useLegacyDatetimeCode=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+    networks:
+      - sns_network
+
+networks:
+  sns_network:
