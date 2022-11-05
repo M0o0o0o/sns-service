@@ -1,0 +1,13 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "748772378430.dkr.ecr.us-east-1.amazonaws.com/sns-service",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": "5000",
+      "HostPort": "5000"
+    }
+  ]
+}
