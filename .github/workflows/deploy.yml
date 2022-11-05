@@ -1,9 +1,9 @@
 name: test CI to build and test sns-service
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+      types:
+        - closed
 
 jobs:
   build:
