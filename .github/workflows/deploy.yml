@@ -5,10 +5,10 @@ on:
     branches:
       - main
   pull_request:
-      types:
-        - closed
-      branches:
-        - main
+    types:
+      - closed
+    branches:
+      - main
 
 jobs:
   build:
