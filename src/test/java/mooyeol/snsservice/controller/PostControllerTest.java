@@ -3,6 +3,7 @@ package mooyeol.snsservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mooyeol.snsservice.domain.Post;
 import mooyeol.snsservice.dto.PostAddDto;
+import mooyeol.snsservice.security.config.AjaxSecurityConfig;
 import mooyeol.snsservice.service.PostService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,8 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,8 +34,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
-@WithMockUser
+@WebMvcTest(value = PostController.class, excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AjaxSecurityConfig.class)
+})
+@MockBean(JpaMetamodelMappingContext.class)
 class PostControllerTest {
     MockMvc mockMvc;
 
@@ -39,9 +46,6 @@ class PostControllerTest {
 
     @MockBean
     PostService postService;
-
-    @PersistenceContext
-    EntityManager em;
 
     private ObjectMapper mapper;
 
