@@ -11,7 +11,7 @@
 
 # issue 해결 과정
 - [배포 자동화 환경 구축하는 과정](https://shade-jackrabbit-4bd.notion.site/927d74f57fd34746a597073a982719de)
-
+- [Spring Data JPA + QueryDSL 도입기](https://shade-jackrabbit-4bd.notion.site/JPA-Spring-Data-JPA-QueryDSL-8f37793b6e604e7695d72aad25d7a870)
 
 # ERD
 <img width="1329" alt="스크린샷 2022-10-26 오후 1 49 01" src="https://user-images.githubusercontent.com/68809337/197937287-5a02e936-7047-4d54-9a1f-ef36d418cbde.png">
