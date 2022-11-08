@@ -16,6 +16,7 @@ public class PostConditionDto {
     private String order;
 
     @Pattern(regexp = "^(true|false)$", message = "true 또는 false만 입력해주세요.")
+    @NotNull
     public String desc;
 
     private String search;

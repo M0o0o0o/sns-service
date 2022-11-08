@@ -1,11 +1,15 @@
 package mooyeol.snsservice.repository.member;
 
+import mooyeol.snsservice.config.TestConfig;
 import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +22,9 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@Transactional
+@Import(TestConfig.class)
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class H2MemberRepositoryTest {
 
     @Autowired

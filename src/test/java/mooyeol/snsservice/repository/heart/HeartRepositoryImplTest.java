@@ -1,15 +1,21 @@
 package mooyeol.snsservice.repository.heart;
 
+import mooyeol.snsservice.config.TestConfig;
 import mooyeol.snsservice.domain.Heart;
 import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.domain.Post;
 import mooyeol.snsservice.repository.HeartRepository;
 import mooyeol.snsservice.repository.MemberRepository;
 import mooyeol.snsservice.repository.PostRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -20,8 +26,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@SpringBootTest
-@Transactional
+@Import(TestConfig.class)
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class HeartRepositoryImplTest {
 
     @PersistenceContext
@@ -35,6 +42,7 @@ class HeartRepositoryImplTest {
 
     @Autowired
     PostRepository postRepository;
+
 
     @Test
     @DisplayName("좋아요 저장")
