@@ -15,7 +15,7 @@ public class PostTag {
     @Column(name = "post_tag_id")
     private long id;
 
-    @Column(name = "post_tag_name")
+    @Column(name = "post_tag_name", length = 50, nullable = false)
     private String postTagName;
 
     @ManyToOne(fetch = FetchType.LAZY)

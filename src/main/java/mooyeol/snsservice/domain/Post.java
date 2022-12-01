@@ -12,7 +12,7 @@ import java.util.List;
 @Entity @Getter @Setter @ToString
 public class Post extends TimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
     private long id;
 
@@ -31,6 +31,9 @@ public class Post extends TimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToMany(mappedBy = "post")
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
     private List<Heart> heartList = new ArrayList<>();

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import mooyeol.snsservice.domain.Member;
 import mooyeol.snsservice.domain.Post;
 import mooyeol.snsservice.dto.*;
-import mooyeol.snsservice.exception.ErrorResponse;
+import mooyeol.snsservice.repository.exception.ErrorResponse;
 import mooyeol.snsservice.service.PostService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

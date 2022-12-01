@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 public class Heart {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "heart_id")
     private long id;
 

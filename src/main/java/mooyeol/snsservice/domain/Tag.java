@@ -13,6 +13,6 @@ public class Tag {
     @Column(name = "tag_id")
     long id;
 
-    @Column(name = "tag_name")
+    @Column(name = "tag_name", length = 50, nullable = false)
     String name;
 }
