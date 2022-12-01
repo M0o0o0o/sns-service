@@ -44,6 +44,8 @@ public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PATCH, "/post/**").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/post/**").authenticated()
                 .antMatchers(HttpMethod.POST, "/post/like/**").authenticated()
+                .antMatchers(HttpMethod.POST, "/comment/**").authenticated()
+                .antMatchers(HttpMethod.POST, "/reply/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
